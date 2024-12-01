@@ -5,7 +5,10 @@ use itertools::repeat_n;
 pub mod template;
 
 fn parse_lines<T: FromStr>(input: &str) -> Vec<T> {
-    input.lines().filter_map(|l| Result::ok(l.parse::<T>())).collect()
+    input
+        .lines()
+        .filter_map(|l| Result::ok(l.parse::<T>()))
+        .collect()
 }
 pub fn ints(input: &str) -> Vec<i64> {
     parse_lines(input)
@@ -25,7 +28,10 @@ pub fn grid(input: &str) -> Vec<Vec<char>> {
     input.lines().map(|l| l.chars().collect()).collect()
 }
 pub fn int_grid(input: &str) -> Vec<Vec<i64>> {
-    input.lines().map(|l| l.split_whitespace().map(|s| s.parse().unwrap()).collect()).collect()
+    input
+        .lines()
+        .map(|l| l.split_whitespace().map(|s| s.parse().unwrap()).collect())
+        .collect()
 }
 
 pub fn repeat_2d<T: Clone>(val: T, r: usize, c: usize) -> Vec<Vec<T>> {
@@ -49,7 +55,7 @@ pub fn gcd(a: i64, b: i64) -> i64 {
     if b == 0 {
         a
     } else {
-        gcd(b, a%b)
+        gcd(b, a % b)
     }
 }
 pub fn lcm(a: i64, b: i64) -> i64 {
@@ -62,8 +68,9 @@ pub fn neighbors(cr: i64, cc: i64, r: usize, c: usize) -> Vec<(i64, i64, char)> 
     let dirs = ['N', 'E', 'S', 'W'];
     let mut res = vec![];
     for i in 0..dirs.len() {
-        if cr+dr[i] >= 0 && cr+dr[i] < (r as i64) && cc+dc[i] >= 0 && cc+dc[i] < (c as i64) {
-            res.push((cr+dr[i], cc+dc[i], dirs[i]));
+        if cr + dr[i] >= 0 && cr + dr[i] < (r as i64) && cc + dc[i] >= 0 && cc + dc[i] < (c as i64)
+        {
+            res.push((cr + dr[i], cc + dc[i], dirs[i]));
         }
     }
     res
@@ -74,8 +81,9 @@ pub fn neighbors8(cr: i64, cc: i64, r: usize, c: usize) -> Vec<(i64, i64, &'stat
     let dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
     let mut res = vec![];
     for i in 0..dirs.len() {
-        if cr+dr[i] >= 0 && cr+dr[i] < (r as i64) && cc+dc[i] >= 0 && cc+dc[i] < (c as i64) {
-            res.push((cr+dr[i], cc+dc[i], dirs[i]));
+        if cr + dr[i] >= 0 && cr + dr[i] < (r as i64) && cc + dc[i] >= 0 && cc + dc[i] < (c as i64)
+        {
+            res.push((cr + dr[i], cc + dc[i], dirs[i]));
         }
     }
     res

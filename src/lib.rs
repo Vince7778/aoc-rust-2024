@@ -4,17 +4,17 @@ use itertools::repeat_n;
 
 pub mod template;
 
-fn parse_lines<T: FromStr>(input: &str) -> Vec<T> {
+fn parse_map<T: FromStr>(input: &str) -> Vec<T> {
     input
-        .lines()
+        .split_whitespace()
         .filter_map(|l| Result::ok(l.parse::<T>()))
         .collect()
 }
 pub fn ints(input: &str) -> Vec<i64> {
-    parse_lines(input)
+    parse_map(input)
 }
 pub fn floats(input: &str) -> Vec<f64> {
-    parse_lines(input)
+    parse_map(input)
 }
 pub fn vec_lines(input: &str) -> Vec<&str> {
     input.lines().collect()

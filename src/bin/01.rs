@@ -1,37 +1,27 @@
-use advent_of_code::ints;
+use advent_of_code::int_grid;
 
 advent_of_code::solution!(1);
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let (mut l1, mut l2): (Vec<_>, Vec<_>) = input
-        .lines()
-        .map(|x| -> (i64, i64) {
-            match ints(x)[..] {
-                [a, b] => (a, b),
-                _ => panic!(),
-            }
-        })
-        .unzip();
+    let (mut l1, mut l2): (Vec<_>, Vec<_>) =
+        int_grid(input).into_iter().map(|x| (x[0], x[1])).unzip();
     l1.sort();
     l2.sort();
-    Some(
-        l1.into_iter()
-            .zip(l2)
-            .map(|(a, b)| (a - b).unsigned_abs() as u32)
-            .sum(),
-    )
+    let res: u64 = l1
+        .into_iter()
+        .zip(l2)
+        .map(|(a, b)| (a - b).unsigned_abs())
+        .sum();
+    Some(res as u32)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
     let mut cnt: Vec<usize> = vec![0; 100_000];
-    let l: Vec<usize> = input
-        .lines()
-        .map(|x| match ints(x)[..] {
-            [a, b] => {
-                cnt[b as usize] += 1;
-                a as usize
-            }
-            _ => panic!(),
+    let l: Vec<usize> = int_grid(input)
+        .into_iter()
+        .map(|x| {
+            cnt[x[1] as usize] += 1;
+            x[0] as usize
         })
         .collect();
     let res: usize = l.into_iter().map(|x| x * cnt[x]).sum();

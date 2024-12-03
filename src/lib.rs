@@ -20,7 +20,10 @@ pub fn vec_lines(input: &str) -> Vec<&str> {
     input.lines().collect()
 }
 
-pub fn pint(c: char) -> i64 {
+pub fn parse(s: &str) -> i64 {
+    s.parse().unwrap()
+}
+pub fn parse_char(c: char) -> i64 {
     char::to_digit(c, 10).unwrap() as i64
 }
 

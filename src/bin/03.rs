@@ -1,37 +1,38 @@
+use advent_of_code::parse;
 use regex::Regex;
 
 advent_of_code::solution!(3);
 
 pub fn part_one(input: &str) -> Option<u32> {
     let re = Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)").unwrap();
-    let mut ans: u32 = 0;
-    for (_, [a, b]) in re.captures_iter(input).map(|c| c.extract()) {
-        ans += a.parse::<u32>().unwrap() * b.parse::<u32>().unwrap();
-    }
-    Some(ans)
+    let res: i64 = re
+        .captures_iter(input)
+        .map(|c| c.extract::<2>())
+        .map(|(_, [a, b])| parse(a) * parse(b))
+        .sum();
+    Some(res as u32)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let re = Regex::new(r"(mul)\((\d{1,3}),(\d{1,3})\)|(do)\(\)()()|(don't)\(\)()()").unwrap();
-    let mut ans: u32 = 0;
-    let mut enabled: bool = true;
-    for (_, [ty, a, b]) in re.captures_iter(input).map(|c| c.extract()) {
-        match ty {
-            "mul" => {
-                if enabled {
-                    ans += a.parse::<u32>().unwrap() * b.parse::<u32>().unwrap();
-                }
-            }
+    let re = Regex::new(r"(mul)\((\d{1,3}),(\d{1,3})\)|(do(?:n't)?)\(\)()()").unwrap();
+    let mut enabled = true;
+    let res: i64 = re
+        .captures_iter(input)
+        .map(|c| c.extract::<3>())
+        .filter_map(|(_, [ty, a, b])| match ty {
+            "mul" => enabled.then_some(parse(a) * parse(b)),
             "do" => {
                 enabled = true;
+                None
             }
             "don't" => {
                 enabled = false;
+                None
             }
-            _ => panic!()
-        }
-    }
-    Some(ans)
+            _ => panic!("unexpected type"),
+        })
+        .sum();
+    Some(res as u32)
 }
 
 #[cfg(test)]
@@ -46,7 +47,9 @@ mod tests {
 
     #[test]
     fn test_part_two() {
-        let result: Option<u32> = part_two(&advent_of_code::template::read_file_part("examples", DAY, 2));
+        let result: Option<u32> = part_two(&advent_of_code::template::read_file_part(
+            "examples", DAY, 2,
+        ));
         assert_eq!(result, Some(48));
     }
 }

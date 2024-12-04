@@ -5,13 +5,18 @@ advent_of_code::solution!(4);
 pub fn part_one(input: &str) -> Option<u32> {
     let mut g = grid(input);
     let mut ans = 0;
-    for rot in 0..4 {
+    for _ in 0..4 {
         for r in 0..g.len() {
-            for c in 0..g[r].len()-3 {
-                if g[r][c] == 'X' && g[r][c+1] == 'M' && g[r][c+2] == 'A' && g[r][c+3] == 'S' {
+            for c in 0..g[r].len() - 3 {
+                if g[r][c..c + 4] == ['X', 'M', 'A', 'S'] {
                     ans += 1;
                 }
-                if r < g.len()-3 && g[r][c] == 'X' && g[r+1][c+1] == 'M' && g[r+2][c+2] == 'A' && g[r+3][c+3] == 'S' {
+                if r < g.len() - 3
+                    && g[r][c] == 'X'
+                    && g[r + 1][c + 1] == 'M'
+                    && g[r + 2][c + 2] == 'A'
+                    && g[r + 3][c + 3] == 'S'
+                {
                     ans += 1;
                 }
             }
@@ -24,10 +29,15 @@ pub fn part_one(input: &str) -> Option<u32> {
 pub fn part_two(input: &str) -> Option<u32> {
     let mut g = grid(input);
     let mut ans = 0;
-    for rot in 0..4 {
-        for r in 0..g.len()-2 {
-            for c in 0..g[r].len()-2 {
-                if g[r][c] == 'M' && g[r+1][c+1] == 'A' && g[r+2][c+2] == 'S' && g[r+2][c] == 'M' && g[r][c+2] == 'S' {
+    for _ in 0..4 {
+        for r in 0..g.len() - 2 {
+            for c in 0..g[r].len() - 2 {
+                if g[r][c] == 'M'
+                    && g[r + 1][c + 1] == 'A'
+                    && g[r + 2][c + 2] == 'S'
+                    && g[r + 2][c] == 'M'
+                    && g[r][c + 2] == 'S'
+                {
                     ans += 1;
                 }
             }

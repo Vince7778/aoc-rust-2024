@@ -23,6 +23,9 @@ pub fn vec_lines(input: &str) -> Vec<&str> {
 pub fn parse(s: &str) -> i64 {
     s.parse().unwrap()
 }
+pub fn parse_u(s: &str) -> usize {
+    s.parse().unwrap()
+}
 pub fn parse_char(c: char) -> i64 {
     char::to_digit(c, 10).unwrap() as i64
 }

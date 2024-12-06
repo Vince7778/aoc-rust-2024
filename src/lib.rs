@@ -90,7 +90,10 @@ pub fn neighbors8(cr: isize, cc: isize, r: usize, c: usize) -> Vec<(isize, isize
     let dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
     let mut res = vec![];
     for i in 0..dirs.len() {
-        if cr + dr[i] >= 0 && cr + dr[i] < (r as isize) && cc + dc[i] >= 0 && cc + dc[i] < (c as isize)
+        if cr + dr[i] >= 0
+            && cr + dr[i] < (r as isize)
+            && cc + dc[i] >= 0
+            && cc + dc[i] < (c as isize)
         {
             res.push((cr + dr[i], cc + dc[i], dirs[i]));
         }

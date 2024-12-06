@@ -4,20 +4,25 @@ use advent_of_code::{grid, run_move, DD};
 
 advent_of_code::solution!(6);
 
-fn get_vis(g: &Vec<Vec<char>>, start_pos: (usize, usize)) -> HashSet<(usize, usize)> {
+fn simulate(g: &[Vec<char>], start_pos: (usize, usize)) -> (HashSet<(usize, usize)>, bool) {
     let r = g.len();
     let c = g[0].len();
     let mut vis_pos: HashSet<(usize, usize)> = HashSet::new();
+    let mut state_pos: HashSet<((usize, usize), usize)> = HashSet::new();
     let mut cur_pos = start_pos;
     let mut cur_dir = 0;
     loop {
         vis_pos.insert(cur_pos);
+        if state_pos.contains(&(cur_pos, cur_dir)) {
+            return (vis_pos, true);
+        }
+        state_pos.insert((cur_pos, cur_dir));
         let new_pos = run_move(cur_pos, DD[cur_dir]);
         if new_pos.0 >= r || new_pos.1 >= c {
-            return vis_pos;
+            return (vis_pos, false);
         }
         if g[new_pos.0][new_pos.1] == '#' {
-            cur_dir = (cur_dir+1)%4;
+            cur_dir = (cur_dir + 1) % 4;
         } else {
             cur_pos = new_pos;
         }
@@ -28,49 +33,21 @@ pub fn part_one(input: &str) -> Option<u32> {
     let g = grid(input);
     let c = g[0].len();
     let start_ind = input.find('^').unwrap();
-    let start_pos = (
-        start_ind / (c+1),
-        start_ind % (c+1)
-    );
-    Some(get_vis(&g, start_pos).len() as u32)
-}
-
-fn loops(g: &Vec<Vec<char>>, start_pos: (usize, usize)) -> bool {
-    let r = g.len();
-    let c = g[0].len();
-    let mut vis_pos: HashSet<(usize, usize, usize)> = HashSet::new();
-    let mut cur_pos = start_pos;
-    let mut cur_dir = 0;
-    loop {
-        let state = (cur_pos.0, cur_pos.1, cur_dir);
-        if vis_pos.contains(&state) {
-            return true;
-        }
-        vis_pos.insert(state);
-        let new_pos = run_move(cur_pos, DD[cur_dir]);
-        if new_pos.0 >= r || new_pos.1 >= c {
-            return false;
-        }
-        if g[new_pos.0][new_pos.1] == '#' {
-            cur_dir = (cur_dir+1)%4;
-        } else {
-            cur_pos = new_pos;
-        }
-    }
+    let start_pos = (start_ind / (c + 1), start_ind % (c + 1));
+    let (vis, _) = simulate(&g, start_pos);
+    Some(vis.len() as u32)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
     let mut g = grid(input);
     let c = g[0].len();
     let start_ind = input.find('^').unwrap();
-    let start_pos = (
-        start_ind / (c+1),
-        start_ind % (c+1)
-    );
+    let start_pos = (start_ind / (c + 1), start_ind % (c + 1));
     let mut ans = 0;
-    for (i, j) in get_vis(&g, start_pos) {
+    let (vis, _) = simulate(&g, start_pos);
+    for (i, j) in vis {
         g[i][j] = '#';
-        ans += if loops(&g, start_pos) {1} else {0};
+        ans += if simulate(&g, start_pos).1 { 1 } else { 0 };
         g[i][j] = '.';
     }
     Some(ans)

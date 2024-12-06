@@ -2,7 +2,7 @@ use advent_of_code::int_grid;
 
 advent_of_code::solution!(2);
 
-fn test_row(a: &[i64]) -> bool {
+fn test_row(a: &[isize]) -> bool {
     return a.windows(2).all(|v| v[0] < v[1] && v[0] >= v[1] - 3)
         || a.windows(2).all(|v| v[0] > v[1] && v[0] <= v[1] + 3);
 }

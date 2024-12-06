@@ -10,7 +10,7 @@ fn parse_map<T: FromStr>(input: &str) -> Vec<T> {
         .filter_map(|l| Result::ok(l.parse::<T>()))
         .collect()
 }
-pub fn ints(input: &str) -> Vec<i64> {
+pub fn ints(input: &str) -> Vec<isize> {
     parse_map(input)
 }
 pub fn floats(input: &str) -> Vec<f64> {
@@ -20,20 +20,20 @@ pub fn vec_lines(input: &str) -> Vec<&str> {
     input.lines().collect()
 }
 
-pub fn parse(s: &str) -> i64 {
+pub fn parse(s: &str) -> isize {
     s.parse().unwrap()
 }
 pub fn parse_u(s: &str) -> usize {
     s.parse().unwrap()
 }
-pub fn parse_char(c: char) -> i64 {
-    char::to_digit(c, 10).unwrap() as i64
+pub fn parse_char(c: char) -> isize {
+    char::to_digit(c, 10).unwrap() as isize
 }
 
 pub fn grid(input: &str) -> Vec<Vec<char>> {
     input.lines().map(|l| l.chars().collect()).collect()
 }
-pub fn int_grid(input: &str) -> Vec<Vec<i64>> {
+pub fn int_grid(input: &str) -> Vec<Vec<isize>> {
     input
         .lines()
         .map(|l| l.split_whitespace().map(|s| s.parse().unwrap()).collect())
@@ -57,37 +57,40 @@ pub fn mat_rotate<T: Clone>(matrix: Vec<Vec<T>>) -> Vec<Vec<T>> {
         .collect()
 }
 
-pub fn gcd(a: i64, b: i64) -> i64 {
+pub fn gcd(a: isize, b: isize) -> isize {
     if b == 0 {
         a
     } else {
         gcd(b, a % b)
     }
 }
-pub fn lcm(a: i64, b: i64) -> i64 {
+pub fn lcm(a: isize, b: isize) -> isize {
     a / gcd(a, b) * b
 }
 
-pub fn neighbors(cr: i64, cc: i64, r: usize, c: usize) -> Vec<(i64, i64, char)> {
-    let dr = [-1, 0, 1, 0];
-    let dc = [0, 1, 0, -1];
+pub const DD: [(isize, isize); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
+
+pub fn run_move(p: (usize, usize), d: (isize, isize)) -> (usize, usize) {
+    (p.0.wrapping_add_signed(d.0), p.1.wrapping_add_signed(d.1))
+}
+pub fn neighbors(cr: usize, cc: usize, r: usize, c: usize) -> Vec<(usize, usize, char)> {
     let dirs = ['N', 'E', 'S', 'W'];
     let mut res = vec![];
-    for i in 0..dirs.len() {
-        if cr + dr[i] >= 0 && cr + dr[i] < (r as i64) && cc + dc[i] >= 0 && cc + dc[i] < (c as i64)
-        {
-            res.push((cr + dr[i], cc + dc[i], dirs[i]));
+    for i in 0..DD.len() {
+        let (nr, nc) = run_move((cr, cc), DD[i]);
+        if nr < r && nc < c {
+            res.push((nr, nc, dirs[i]));
         }
     }
     res
 }
-pub fn neighbors8(cr: i64, cc: i64, r: usize, c: usize) -> Vec<(i64, i64, &'static str)> {
+pub fn neighbors8(cr: isize, cc: isize, r: usize, c: usize) -> Vec<(isize, isize, &'static str)> {
     let dr = [-1, -1, 0, 1, 1, 1, 0, -1];
     let dc = [0, 1, 1, 1, 0, -1, -1, -1];
     let dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
     let mut res = vec![];
     for i in 0..dirs.len() {
-        if cr + dr[i] >= 0 && cr + dr[i] < (r as i64) && cc + dc[i] >= 0 && cc + dc[i] < (c as i64)
+        if cr + dr[i] >= 0 && cr + dr[i] < (r as isize) && cc + dc[i] >= 0 && cc + dc[i] < (c as isize)
         {
             res.push((cr + dr[i], cc + dc[i], dirs[i]));
         }

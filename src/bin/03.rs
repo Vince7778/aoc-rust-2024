@@ -5,7 +5,7 @@ advent_of_code::solution!(3);
 
 pub fn part_one(input: &str) -> Option<u32> {
     let re = Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)").unwrap();
-    let res: i64 = re
+    let res: isize = re
         .captures_iter(input)
         .map(|c| c.extract::<2>())
         .map(|(_, [a, b])| parse(a) * parse(b))
@@ -16,7 +16,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 pub fn part_two(input: &str) -> Option<u32> {
     let re = Regex::new(r"(mul)\((\d{1,3}),(\d{1,3})\)|(do(?:n't)?)\(\)()()").unwrap();
     let mut enabled = true;
-    let res: i64 = re
+    let res: isize = re
         .captures_iter(input)
         .map(|c| c.extract::<3>())
         .filter_map(|(_, [ty, a, b])| match ty {

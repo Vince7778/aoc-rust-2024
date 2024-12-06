@@ -7,7 +7,7 @@ pub fn part_one(input: &str) -> Option<u32> {
         int_grid(input).into_iter().map(|x| (x[0], x[1])).unzip();
     l1.sort();
     l2.sort();
-    let res: u64 = l1
+    let res: usize = l1
         .into_iter()
         .zip(l2)
         .map(|(a, b)| (a - b).unsigned_abs())

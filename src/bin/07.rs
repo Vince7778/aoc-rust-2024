@@ -3,56 +3,50 @@ use itertools::Itertools;
 
 advent_of_code::solution!(7);
 
+fn iconcat(a: isize, b: isize) -> isize {
+    parse(&(a.to_string() + &b.to_string()))
+}
+
+fn dfs(vals: &[isize], target: isize, i: usize, cur: isize, part2: bool) -> bool {
+    if i == vals.len() {
+        return cur == target;
+    }
+    dfs(vals, target, i + 1, cur + vals[i], part2)
+        || dfs(vals, target, i + 1, cur * vals[i], part2)
+        || (part2 && dfs(vals, target, i + 1, iconcat(cur, vals[i]), part2))
+}
+
 pub fn part_one(input: &str) -> Option<usize> {
-    let ans: isize = input.lines().map(|l| {
-        let (x, rest) = l.split(':').collect_tuple().unwrap();
-        let x = parse(x);
-        let r = ints(rest);
-        for i in 0..(1 << (r.len()-1)) {
-            let mut cur = r[0];
-            for j in 1..r.len() {
-                let oper = (i >> (j-1)) % 2;
-                match oper {
-                    0 => { cur += r[j]; }
-                    1 => { cur *= r[j]; }
-                    _ => {}
-                }
+    let ans: isize = input
+        .lines()
+        .map(|l| {
+            let (x, rest) = l.split(':').collect_tuple().unwrap();
+            let x = parse(x);
+            let r = ints(rest);
+            if dfs(&r, x, 0, 0, false) {
+                x
+            } else {
+                0
             }
-            if cur == x {
-                return x;
-            }
-        }
-        return 0;
-    }).sum();
+        })
+        .sum();
     Some(ans as usize)
 }
 
 pub fn part_two(input: &str) -> Option<usize> {
-    let ans: isize = input.lines().map(|l| {
-        let (x, rest) = l.split(':').collect_tuple().unwrap();
-        let x = parse(x);
-        let r = ints(rest);
-        for i in 0..(3_u32.pow((r.len() as u32)-1)) {
-            let mut cur = r[0];
-            for j in 1..r.len() {
-                let oper = (i / 3_u32.pow((j-1) as u32)) % 3;
-                match oper {
-                    0 => { cur += r[j]; }
-                    1 => { cur *= r[j]; }
-                    2 => { 
-                        let digits = r[j].to_string().len();
-                        cur *= 10_isize.pow(digits as u32);
-                        cur += r[j];
-                    }
-                    _ => {}
-                }
+    let ans: isize = input
+        .lines()
+        .map(|l| {
+            let (x, rest) = l.split(':').collect_tuple().unwrap();
+            let x = parse(x);
+            let r = ints(rest);
+            if dfs(&r, x, 0, 0, true) {
+                x
+            } else {
+                0
             }
-            if cur == x {
-                return x;
-            }
-        }
-        return 0;
-    }).sum();
+        })
+        .sum();
     Some(ans as usize)
 }
 

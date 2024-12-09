@@ -14,7 +14,10 @@ pub fn part_one(input: &str) -> Option<u32> {
                     if (r1 == r2 && c1 == c2) || g[r1][c1] == '.' || g[r1][c1] != g[r2][c2] {
                         continue;
                     }
-                    let (rm, cm) = run_move((r2, c2), ((r2 as isize) - (r1 as isize), (c2 as isize) - (c1 as isize)));
+                    let (rm, cm) = run_move(
+                        (r2, c2),
+                        ((r2 as isize) - (r1 as isize), (c2 as isize) - (c1 as isize)),
+                    );
                     if rm < g.len() && cm < g[0].len() {
                         s.insert((rm, cm));
                     }
@@ -39,7 +42,7 @@ pub fn part_two(input: &str) -> Option<u32> {
                     let dc = (c2 as isize) - (c1 as isize);
                     let mut i = -1;
                     loop {
-                        let (rm, cm) = run_move((r1, c1), (i*dr, i*dc));
+                        let (rm, cm) = run_move((r1, c1), (i * dr, i * dc));
                         if rm >= g.len() || cm >= g[0].len() {
                             break;
                         }
@@ -48,7 +51,7 @@ pub fn part_two(input: &str) -> Option<u32> {
                     }
                     let mut i = 0;
                     loop {
-                        let (rm, cm) = run_move((r1, c1), (i*dr, i*dc));
+                        let (rm, cm) = run_move((r1, c1), (i * dr, i * dc));
                         if rm >= g.len() || cm >= g[0].len() {
                             break;
                         }

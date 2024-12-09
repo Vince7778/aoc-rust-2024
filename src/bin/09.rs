@@ -1,93 +1,89 @@
-use advent_of_code::{parse, parse_char};
+use advent_of_code::parse_char;
 
 advent_of_code::solution!(9);
 
-pub fn part_one(input: &str) -> Option<usize> {
-    let mut v: Vec<isize> = vec![-1; input.len()*10];
-    let mut vi = 0;
-    for (i, c) in input.lines().next().unwrap().chars().enumerate() {
-        let cc = parse_char(c);
-        for j in 0..cc {
-            if i % 2 == 0 {
-                v[vi] = (i as isize)/2;
-            }
-            vi += 1;
-        }
-    }
-    let ovi = vi;
-    vi = 0;
-    for i in (0..ovi).rev() {
-        if v[i] != -1 {
-            while vi < i && v[vi] != -1 {
-                vi += 1;
-            }
-            if vi >= i {
-                break;
-            }
-            v[vi] = v[i];
-            v[i] = -1;
-        }
-    }
-    let mut ans = 0;
-    for i in 0..v.len() {
-        if v[i] != -1 {
-            ans += i*(v[i] as usize);
-        }
-    }
-    Some(ans as usize)
-}
-
 #[derive(Clone, Copy, Debug)]
 struct Block {
-    pub i: usize,
+    pub start: usize,
+    pub end: usize,
     pub v: usize,
-    pub len: usize,
+}
+
+impl Block {
+    pub fn new(start: usize, end: usize, v: usize) -> Block {
+        Block { start, end, v }
+    }
+
+    pub fn len(&self) -> usize {
+        self.end - self.start
+    }
+
+    pub fn score(&self) -> usize {
+        let l = self.len();
+        self.v * l * (2 * self.start + l - 1) / 2
+    }
+}
+
+fn optimize_blocks(blocks: Vec<Block>, mut free: Vec<Block>) -> Vec<Block> {
+    let mut res: Vec<Block> = Vec::new();
+    for b in blocks.into_iter().rev() {
+        let mut found = false;
+        for i in 0..free.len() {
+            if free[i].start >= b.start {
+                break;
+            }
+            if free[i].len() >= b.len() {
+                found = true;
+                res.push(Block::new(free[i].start, free[i].start + b.len(), b.v));
+                if free[i].len() > b.len() {
+                    free[i].start += b.len();
+                } else {
+                    free.remove(i);
+                }
+                break;
+            }
+        }
+        if !found {
+            res.push(b);
+        }
+    }
+    res
+}
+
+pub fn part_one(input: &str) -> Option<usize> {
+    let mut blocks: Vec<Block> = Vec::new();
+    let mut free_blocks: Vec<Block> = Vec::new();
+    input.trim().chars().enumerate().fold(0, |a, (i, c)| {
+        let cc = parse_char(c) as usize;
+        for bi in 0..cc {
+            let b = Block::new(a + bi, a + bi + 1, i / 2);
+            if i % 2 == 0 {
+                blocks.push(b);
+            } else {
+                free_blocks.push(b);
+            }
+        }
+        a + cc
+    });
+    let res = optimize_blocks(blocks, free_blocks);
+    Some(res.into_iter().map(|b| b.score()).sum())
 }
 
 pub fn part_two(input: &str) -> Option<usize> {
-    let mut v: Vec<Block> = Vec::new();
-    let mut vf: Vec<Block> = Vec::new();
-    let mut vi = 0;
-    for (i, c) in input.lines().next().unwrap().chars().enumerate() {
-        let cc = parse_char(c);
+    let mut blocks: Vec<Block> = Vec::new();
+    let mut free_blocks: Vec<Block> = Vec::new();
+    input.trim().chars().enumerate().fold(0, |a, (i, c)| {
+        let cc = parse_char(c) as usize;
+        let b = Block::new(a, a + cc, i / 2);
         if i % 2 == 0 {
-            vf.push(Block { i: vi, v: i/2, len: cc as usize});
+            blocks.push(b);
         } else {
-            v.push(Block { i: vi, v: 0, len: cc as usize});
+            free_blocks.push(b);
         }
-        vi += cc as usize;
-    }
-    let mut vfn: Vec<Block> = Vec::new();
-    for &b in vf.iter().rev() {
-        let mut found = false;
-        for xi in 0..v.len() {
-            let x = v[xi];
-            if x.i >= b.i {
-                break;
-            }
-            if x.len < b.len {
-                continue;
-            }
-            found = true;
-            vfn.push(Block { i: x.i, v: b.v, len: b.len });
-            v.remove(xi);
-            if b.len < x.len {
-                v.insert(xi, Block { i: x.i + b.len, v: 0, len: x.len - b.len});
-            }
-            break;
-        }
-        if !found {
-            vfn.push(b);
-        }
-    }
-    let mut ans = 0;
-    for &b in vfn.iter() {
-        for i in b.i..(b.i+b.len) {
-            ans += i*b.v;
-        }
-        println!("{:?}", b);
-    }
-    Some(ans)
+        a + cc
+    });
+    let res = optimize_blocks(blocks, free_blocks);
+    Some(res.into_iter().map(|b| b.score()).sum())
 }
 
 #[cfg(test)]

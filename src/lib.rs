@@ -67,6 +67,14 @@ pub fn gcd(a: isize, b: isize) -> isize {
 pub fn lcm(a: isize, b: isize) -> isize {
     a / gcd(a, b) * b
 }
+pub fn count_digits(mut x: usize) -> u32 {
+    let mut ans = 0;
+    while x > 0 {
+        ans += 1;
+        x /= 10;
+    }
+    ans
+}
 
 pub const DD: [(isize, isize); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
 

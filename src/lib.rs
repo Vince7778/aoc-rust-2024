@@ -10,8 +10,20 @@ fn parse_map<T: FromStr>(input: &str) -> Vec<T> {
         .filter_map(|l| Result::ok(l.parse::<T>()))
         .collect()
 }
-pub fn ints(input: &str) -> Vec<isize> {
+pub fn naive_ints(input: &str) -> Vec<isize> {
     parse_map(input)
+}
+pub fn ints(input: &str, negatives: bool) -> Vec<isize> {
+    input
+        .split(|c: char| !c.is_ascii_digit() && !(negatives && c == '-'))
+        .filter_map(|s| Result::ok(s.parse::<isize>()))
+        .collect()
+}
+pub fn uints(input: &str) -> Vec<usize> {
+    input
+        .split(|c: char| !c.is_ascii_digit())
+        .filter_map(|s| Result::ok(s.parse::<usize>()))
+        .collect()
 }
 pub fn floats(input: &str) -> Vec<f64> {
     parse_map(input)
@@ -107,4 +119,27 @@ pub fn neighbors8(cr: isize, cc: isize, r: usize, c: usize) -> Vec<(isize, isize
         }
     }
     res
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{ints, uints};
+
+    #[test]
+    fn test_parse_uints() {
+        let s = "1asdf141 -42 something!?\"4343 -34  04 00 0";
+        assert_eq!(uints(s), vec![1, 141, 42, 4343, 34, 4, 0, 0]);
+    }
+
+    #[test]
+    fn test_parse_ints() {
+        let s = "1asdf141 -42 something!?\"4343 -34  04 00 0";
+        assert_eq!(ints(s, true), vec![1, 141, -42, 4343, -34, 4, 0, 0]);
+    }
+
+    #[test]
+    fn test_parse_ints_no_negative() {
+        let s = "1asdf141 -42 something!?\"4343 -34  04 00 0";
+        assert_eq!(ints(s, false), vec![1, 141, 42, 4343, 34, 4, 0, 0]);
+    }
 }

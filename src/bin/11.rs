@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use advent_of_code::{count_digits, ints};
+use advent_of_code::{count_digits, naive_ints};
 
 advent_of_code::solution!(11);
 
@@ -25,7 +25,7 @@ fn dfs(s: usize, d: usize, memo: &mut HashMap<(usize, usize), usize>) -> usize {
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let i = ints(input);
+    let i = naive_ints(input);
     let mut memo = HashMap::new();
     Some(
         i.into_iter()
@@ -35,7 +35,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<usize> {
-    let i = ints(input);
+    let i = naive_ints(input);
     let mut memo = HashMap::new();
     Some(
         i.into_iter()

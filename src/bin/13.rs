@@ -1,7 +1,6 @@
 use std::cmp::min;
 
-use advent_of_code::{parse, parse_u, vec_lines};
-use itertools::Itertools;
+use advent_of_code::{ints, uints};
 
 advent_of_code::solution!(13);
 
@@ -9,15 +8,7 @@ pub fn part_one(input: &str) -> Option<usize> {
     let ans: usize = input
         .split("\n\n")
         .map(|s| {
-            let l = vec_lines(s);
-            let x1 = parse_u(&l[0][12..14]);
-            let y1 = parse_u(&l[0][18..20]);
-            let x2 = parse_u(&l[1][12..14]);
-            let y2 = parse_u(&l[1][18..20]);
-            let (_, s2, yg) = l[2].split("=").collect_tuple().unwrap();
-            let (xg, _) = s2.split(",").collect_tuple().unwrap();
-            let xg = parse_u(xg);
-            let yg = parse_u(yg);
+            let [x1, y1, x2, y2, xg, yg] = uints(s)[..] else { panic!(); };
             let mut ans = usize::MAX;
             for aa in 0..=100 {
                 for bb in 0..=100 {
@@ -40,15 +31,9 @@ pub fn part_two(input: &str) -> Option<usize> {
     let ans: isize = input
         .split("\n\n")
         .map(|s| {
-            let l = vec_lines(s);
-            let x1 = parse(&l[0][12..14]);
-            let y1 = parse(&l[0][18..20]);
-            let x2 = parse(&l[1][12..14]);
-            let y2 = parse(&l[1][18..20]);
-            let (_, s2, yg) = l[2].split("=").collect_tuple().unwrap();
-            let (xg, _) = s2.split(",").collect_tuple().unwrap();
-            let xg = parse(xg) + 10000000000000;
-            let yg = parse(yg) + 10000000000000;
+            let [x1, y1, x2, y2, xg, yg] = ints(s, false)[..] else { panic!(); };
+            let xg = xg + 10000000000000;
+            let yg = yg + 10000000000000;
 
             // a*x1 + b*x2 = xg
             // a*y1 + b*y2 = yg

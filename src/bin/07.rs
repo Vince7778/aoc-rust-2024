@@ -1,4 +1,4 @@
-use advent_of_code::{ints, parse};
+use advent_of_code::{naive_ints, parse};
 use itertools::Itertools;
 
 advent_of_code::solution!(7);
@@ -27,7 +27,7 @@ pub fn part_one(input: &str) -> Option<usize> {
         .map(|l| {
             let (x, rest) = l.split(':').collect_tuple().unwrap();
             let x = parse(x);
-            let r = ints(rest);
+            let r = naive_ints(rest);
             if dfs(&r, x, 0, 0, false) {
                 x
             } else {
@@ -44,7 +44,7 @@ pub fn part_two(input: &str) -> Option<usize> {
         .map(|l| {
             let (x, rest) = l.split(':').collect_tuple().unwrap();
             let x = parse(x);
-            let r = ints(rest);
+            let r = naive_ints(rest);
             if dfs(&r, x, 0, 0, true) {
                 x
             } else {

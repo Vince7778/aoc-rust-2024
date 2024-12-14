@@ -28,3 +28,6 @@ dhat-heap.json
 # Benchmarks
 
 data/timings.json
+
+# day 14 text file
+wtf.txt

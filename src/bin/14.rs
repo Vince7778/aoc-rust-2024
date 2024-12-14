@@ -21,7 +21,7 @@ pub fn part_one(input: &str) -> Option<usize> {
             q[3] += 1;
         }
     }
-    Some(q[0]*q[1]*q[2]*q[3])
+    Some(q[0] * q[1] * q[2] * q[3])
 }
 
 pub fn part_two(input: &str) -> Option<usize> {
@@ -31,13 +31,13 @@ pub fn part_two(input: &str) -> Option<usize> {
             let (p, v) = l.split(' ').collect_tuple().unwrap();
             let (p1, p2) = p[2..].split(',').map(parse).collect_tuple().unwrap();
             let (v1, v2) = v[2..].split(',').map(parse).collect_tuple().unwrap();
-            let f1 = (p1 + (101 + v1) * (t*101+7)) % 101;
-            let f2 = (p2 + (103 + v2) * (t*101+7)) % 103;
+            let f1 = (p1 + (101 + v1) * (t * 101 + 7)) % 101;
+            let f2 = (p2 + (103 + v2) * (t * 101 + 7)) % 103;
             g[f2 as usize][f1 as usize] = 'O';
         }
         // i noticed that there was a weird straight line every 101n+7 iterations
         // at least for my input
-        println!("{}", t*101+7);
+        println!("{}", t * 101 + 7);
         for l in g {
             println!("{}", l.into_iter().join(""));
         }

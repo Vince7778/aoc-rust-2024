@@ -15,7 +15,7 @@ pub fn naive_ints(input: &str) -> Vec<isize> {
 }
 pub fn ints(input: &str, negatives: bool) -> Vec<isize> {
     input
-        .split(|c: char| !c.is_ascii_digit() && !(negatives && c == '-'))
+        .split(|c: char| !(c.is_ascii_digit() || negatives && c == '-'))
         .filter_map(|s| Result::ok(s.parse::<isize>()))
         .collect()
 }

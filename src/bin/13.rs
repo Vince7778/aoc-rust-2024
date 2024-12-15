@@ -8,7 +8,9 @@ pub fn part_one(input: &str) -> Option<usize> {
     let ans: usize = input
         .split("\n\n")
         .map(|s| {
-            let [x1, y1, x2, y2, xg, yg] = uints(s)[..] else { panic!(); };
+            let [x1, y1, x2, y2, xg, yg] = uints(s)[..] else {
+                panic!();
+            };
             let mut ans = usize::MAX;
             for aa in 0..=100 {
                 for bb in 0..=100 {
@@ -31,7 +33,9 @@ pub fn part_two(input: &str) -> Option<usize> {
     let ans: isize = input
         .split("\n\n")
         .map(|s| {
-            let [x1, y1, x2, y2, xg, yg] = ints(s, false)[..] else { panic!(); };
+            let [x1, y1, x2, y2, xg, yg] = ints(s, false)[..] else {
+                panic!();
+            };
             let xg = xg + 10000000000000;
             let yg = yg + 10000000000000;
 

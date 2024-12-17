@@ -1,12 +1,12 @@
-use advent_of_code::{ints, parse_u, uints, vec_lines};
+use advent_of_code::{uints, vec_lines};
 use itertools::Itertools;
 
 advent_of_code::solution!(17);
 
-// my hardcoded input
-fn calc(a: usize) -> usize {
+// my hardcoded input simplified
+fn calc(a: usize) -> u8 {
     let i = a & 7;
-    ((a >> (i ^ 3)) ^ a ^ 6) & 7
+    (((a >> (i ^ 3)) ^ a ^ 6) & 7) as u8
 }
 
 pub fn part_one(input: &str) -> Option<String> {
@@ -19,25 +19,22 @@ pub fn part_one(input: &str) -> Option<String> {
     Some(ans.join(","))
 }
 
-fn dfs(a: usize, p: &[usize], i: usize) -> Option<usize> {
+fn dfs(a: usize, p: &[u8], i: usize) -> Option<usize> {
     if i >= p.len() {
         return Some(a);
     }
-    for x in 0..=7 {
+    (0..=7).find_map(|x| {
         let na = (a << 3) + x;
-        if calc(na) == p[i] {
-            let res = dfs(na, p, i+1);
-            if res.is_some() {
-                return res;
-            }
-        }
-    }
-    None
+        (calc(na) == p[i]).then(|| dfs(na, p, i + 1)).flatten()
+    })
 }
 
 pub fn part_two(input: &str) -> Option<usize> {
-    let mut p = vec_lines(input)[4][9..].split(',').map(parse_u).collect_vec();
-    p.reverse();
+    let p = vec_lines(input)[4][9..]
+        .split(',')
+        .map(|x| x.parse().unwrap())
+        .rev()
+        .collect_vec();
     dfs(0, &p, 0)
 }
 

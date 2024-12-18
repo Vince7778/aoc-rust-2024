@@ -63,9 +63,10 @@ pub fn part_two(input: &str) -> Option<String> {
     let p = input
         .lines()
         .map(|l| {
-            let (c, r) = l.split(',').map(parse_u).collect_tuple().unwrap();
-            m[r * COL + c] = Wall;
-            r * COL + c
+            let (c, r) = l.split_once(',').unwrap();
+            let x = parse_u(r) * COL + parse_u(c);
+            m[x] = Wall;
+            x
         })
         .collect_vec();
     ff(0, &mut m);

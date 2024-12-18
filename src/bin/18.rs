@@ -55,6 +55,28 @@ fn ff(x: usize, m: &mut Vec<FFState>) {
     }
 }
 
+const COMMA: u8 = 44;
+const ZERO: u8 = 48;
+
+fn cv(arr: &[u8], i: usize) -> usize {
+    (arr[i] - ZERO) as usize
+}
+fn stupid_input(l: &str) -> usize {
+    let arr = l.as_bytes();
+    match arr.len() {
+        3 => cv(arr, 0) + cv(arr, 2) * COL,
+        4 => {
+            if arr[1] == COMMA {
+                cv(arr, 0) + (cv(arr, 2) * 10 + cv(arr, 3)) * COL
+            } else {
+                cv(arr, 0) * 10 + cv(arr, 1) + cv(arr, 3) * COL
+            }
+        }
+        5 => cv(arr, 0) * 10 + cv(arr, 1) + (cv(arr, 3) * 10 + cv(arr, 4)) * COL,
+        _ => unreachable!(),
+    }
+}
+
 pub fn part_two(input: &str) -> Option<String> {
     let mut m = vec![Unvisited; SZ];
     for r in 1..=ROW {
@@ -63,8 +85,7 @@ pub fn part_two(input: &str) -> Option<String> {
     let p = input
         .lines()
         .map(|l| {
-            let (c, r) = l.split_once(',').unwrap();
-            let x = parse_u(r) * COL + parse_u(c);
+            let x = stupid_input(l);
             m[x] = Wall;
             x
         })

@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use std::collections::VecDeque;
 
 use advent_of_code::{neighbors, parse_u, repeat_2d};
@@ -35,67 +36,62 @@ const SZ: usize = ROW * COL;
 #[derive(PartialEq, Eq, Clone, Copy)]
 enum FFState {
     Wall,
+    TouchedWall,
     Unvisited,
-    Start,
-    End,
+    Visited,
 }
-use itertools::Itertools;
 use FFState::*;
 
-fn ff(x: usize, s: FFState, m: &mut Vec<FFState>) {
-    m[x] = s;
+fn ff(x: usize, m: &mut Vec<FFState>) {
+    m[x] = Visited;
     for y in [x + 1, x + COL, x.wrapping_sub(1), x.wrapping_sub(COL)] {
-        if y < SZ && m[y] == Unvisited {
-            ff(y, s, m);
+        if y < SZ {
+            if m[y] == Wall {
+                m[y] = TouchedWall;
+            } else if m[y] == Unvisited {
+                ff(y, m);
+            }
         }
     }
 }
 
-pub fn part_two_old(input: &str) -> Option<String> {
+pub fn part_two(input: &str) -> Option<String> {
     let mut m = vec![Unvisited; SZ];
     for r in 1..=ROW {
         m[r * COL - 1] = Wall;
     }
     let p = input
         .lines()
-        .rev()
         .map(|l| {
             let (c, r) = l.split(',').map(parse_u).collect_tuple().unwrap();
             m[r * COL + c] = Wall;
             r * COL + c
         })
         .collect_vec();
-    ff(0, Start, &mut m);
-    ff(SZ - 2, End, &mut m);
-    for x in p {
-        m[x] = Unvisited;
-        let mut s = Unvisited;
-        for y in [x + 1, x + COL, x.wrapping_sub(1), x.wrapping_sub(COL)] {
-            if y < SZ {
-                s = match (s, m[y]) {
-                    (x, Wall) => x,
-                    (Unvisited, x) | (x, Unvisited) => x,
-                    (x, y) if x == y => x,
-                    _ => {
-                        return Some(format!("{},{}", x % COL, x / COL));
-                    }
-                }
-            }
+    ff(0, &mut m);
+    for x in p.into_iter().rev() {
+        if m[x] == TouchedWall {
+            ff(x, &mut m);
+        } else {
+            m[x] = Unvisited;
         }
-        if s != Unvisited {
-            ff(x, s, &mut m);
+        if m[SZ - 2] == Visited {
+            return Some(format!("{},{}", x % COL, x / COL));
         }
     }
     None
 }
 
+#[allow(clippy::upper_case_acronyms)]
 struct DSU {
     p: Vec<usize>,
 }
 
 impl DSU {
     pub fn new(s: usize) -> Self {
-        DSU { p: (0..s).collect() }
+        DSU {
+            p: (0..s).collect(),
+        }
     }
 
     pub fn find(&mut self, mut i: usize) -> usize {
@@ -119,7 +115,7 @@ impl DSU {
     }
 }
 
-pub fn part_two(input: &str) -> Option<String> {
+pub fn part_two_dsu(input: &str) -> Option<String> {
     let mut g = vec![false; SZ];
     for r in 1..=ROW {
         g[r * COL - 1] = true;

@@ -51,7 +51,7 @@ fn ff(x: usize, s: FFState, m: &mut Vec<FFState>) {
     }
 }
 
-pub fn part_two(input: &str) -> Option<String> {
+pub fn part_two_old(input: &str) -> Option<String> {
     let mut m = vec![Unvisited; SZ];
     for r in 1..=ROW {
         m[r * COL - 1] = Wall;
@@ -90,37 +90,28 @@ pub fn part_two(input: &str) -> Option<String> {
 }
 
 struct DSU {
-    p: Vec<isize>,
+    p: Vec<usize>,
 }
 
 impl DSU {
     pub fn new(s: usize) -> Self {
-        DSU { p: vec![-1; s] }
+        DSU { p: (0..s).collect() }
     }
 
-    pub fn find(&mut self, i: usize) -> usize {
-        if self.p[i] < 0 {
-            i
-        } else {
-            self.p[i] = self.find(self.p[i] as usize) as isize;
-            self.p[i] as usize
+    pub fn find(&mut self, mut i: usize) -> usize {
+        while i != self.p[i] {
+            self.p[i] = self.p[self.p[i]];
+            i = self.p[i];
         }
+        i
     }
 
-    pub fn union(&mut self, a: usize, b: usize) -> bool {
+    pub fn union(&mut self, a: usize, b: usize) {
         let a = self.find(a);
         let b = self.find(b);
-        if a == b {
-            return false;
+        if a != b {
+            self.p[a] = b;
         }
-        if self.p[a] < self.p[b] {
-            self.p[a] += self.p[b];
-            self.p[b] = a as isize;
-        } else {
-            self.p[b] += self.p[a];
-            self.p[a] = b as isize;
-        }
-        true
     }
 
     pub fn same_set(&mut self, a: usize, b: usize) -> bool {
@@ -128,14 +119,13 @@ impl DSU {
     }
 }
 
-pub fn part_two_dsu(input: &str) -> Option<String> {
+pub fn part_two(input: &str) -> Option<String> {
     let mut g = vec![false; SZ];
     for r in 1..=ROW {
         g[r * COL - 1] = true;
     }
     let p: Vec<usize> = input
         .lines()
-        .rev()
         .map(|l| {
             let (c, r) = l.split(',').map(parse_u).collect_tuple().unwrap();
             g[r * COL + c] = true;
@@ -154,7 +144,7 @@ pub fn part_two_dsu(input: &str) -> Option<String> {
             dsu.union(i, i + COL);
         }
     }
-    for x in p {
+    for x in p.into_iter().rev() {
         g[x] = false;
         for y in [x + 1, x + COL, x.wrapping_sub(1), x.wrapping_sub(COL)] {
             if y < SZ && !g[y] {

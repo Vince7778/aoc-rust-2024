@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use advent_of_code::{grid_old, repeat_2d, run_move};
+use advent_of_code::{grid_find, grid_old, repeat_2d, run_move};
 use itertools::Itertools;
 
 advent_of_code::solution!(15);
@@ -27,19 +27,7 @@ fn shift(g: &mut Vec<Vec<char>>, p: (usize, usize), d: (isize, isize)) -> bool {
 pub fn part_one(input: &str) -> Option<usize> {
     let (g, moves) = input.split("\n\n").collect_tuple().unwrap();
     let mut g = grid_old(g);
-    let mut rb = None;
-    for r in 0..g.len() {
-        for c in 0..g[0].len() {
-            if g[r][c] == '@' {
-                rb = Some((r, c));
-                break;
-            }
-        }
-        if rb.is_some() {
-            break;
-        }
-    }
-    let mut rb = rb.unwrap();
+    let mut rb = grid_find(&g, '@').unwrap();
     for m in moves.chars() {
         let d = match m {
             '<' => (0, -1),
@@ -134,19 +122,7 @@ pub fn part_two(input: &str) -> Option<usize> {
         }
     }
     let mut g = ng;
-    let mut rb = None;
-    for r in 0..g.len() {
-        for c in 0..g[0].len() {
-            if g[r][c] == '@' {
-                rb = Some((r, c));
-                break;
-            }
-        }
-        if rb.is_some() {
-            break;
-        }
-    }
-    let mut rb = rb.unwrap();
+    let mut rb = grid_find(&g, '@').unwrap();
     for m in moves.chars() {
         let (res, d) = match m {
             '<' => (shift2h(&mut g, rb.0, rb.1, true), (0, -1)),

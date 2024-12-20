@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use advent_of_code::{grid, repeat_2d, run_move};
+use advent_of_code::{grid_old, repeat_2d, run_move};
 use itertools::Itertools;
 
 advent_of_code::solution!(15);
@@ -26,7 +26,7 @@ fn shift(g: &mut Vec<Vec<char>>, p: (usize, usize), d: (isize, isize)) -> bool {
 
 pub fn part_one(input: &str) -> Option<usize> {
     let (g, moves) = input.split("\n\n").collect_tuple().unwrap();
-    let mut g = grid(g);
+    let mut g = grid_old(g);
     let mut rb = None;
     for r in 0..g.len() {
         for c in 0..g[0].len() {
@@ -120,7 +120,7 @@ fn shift2h(g: &mut Vec<Vec<char>>, r: usize, c: usize, left: bool) -> bool {
 
 pub fn part_two(input: &str) -> Option<usize> {
     let (g, moves) = input.split("\n\n").collect_tuple().unwrap();
-    let g = grid(g);
+    let g = grid_old(g);
     let mut ng = repeat_2d('.', g.len(), g[0].len() * 2);
     for r in 0..g.len() {
         for c in 0..g[0].len() {

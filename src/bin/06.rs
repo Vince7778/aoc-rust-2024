@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use advent_of_code::{grid, run_move, DD};
+use advent_of_code::{grid_old, run_move, DD};
 
 advent_of_code::solution!(6);
 
@@ -30,7 +30,7 @@ fn simulate(g: &[Vec<char>], start_pos: (usize, usize)) -> (HashSet<(usize, usiz
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let g = grid(input);
+    let g = grid_old(input);
     let c = g[0].len();
     let start_ind = input.find('^').unwrap();
     let start_pos = (start_ind / (c + 1), start_ind % (c + 1));
@@ -39,7 +39,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let mut g = grid(input);
+    let mut g = grid_old(input);
     let c = g[0].len();
     let start_ind = input.find('^').unwrap();
     let start_pos = (start_ind / (c + 1), start_ind % (c + 1));

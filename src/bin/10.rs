@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use advent_of_code::{grid, neighbors, parse_char};
+use advent_of_code::{grid_old, neighbors, parse_char};
 
 advent_of_code::solution!(10);
 
@@ -24,7 +24,7 @@ fn dfs(g: &Vec<Vec<char>>, r: usize, c: usize, vis: &mut Option<HashSet<(usize, 
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let g = grid(input);
+    let g = grid_old(input);
     let mut ans = 0;
     for sr in 0..g.len() {
         for sc in 0..g[0].len() {
@@ -38,7 +38,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let g = grid(input);
+    let g = grid_old(input);
     let mut ans = 0;
     for sr in 0..g.len() {
         for sc in 0..g[0].len() {

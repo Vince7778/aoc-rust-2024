@@ -1,12 +1,12 @@
 use std::collections::{BinaryHeap, HashMap, HashSet};
 
-use advent_of_code::{grid, run_move, DD};
+use advent_of_code::{grid_old, run_move, DD};
 
 advent_of_code::solution!(16);
 
 type PosDir = ((usize, usize), usize);
 pub fn part_one(input: &str) -> Option<usize> {
-    let g = grid(input);
+    let g = grid_old(input);
     let s = (g.len() - 2, 1);
     let e = (1, g[0].len() - 2);
 
@@ -37,7 +37,7 @@ pub fn part_one(input: &str) -> Option<usize> {
 }
 
 pub fn part_two(input: &str) -> Option<usize> {
-    let g = grid(input);
+    let g = grid_old(input);
     let s = (g.len() - 2, 1);
     let e = (1, g[0].len() - 2);
 

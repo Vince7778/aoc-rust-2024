@@ -1,9 +1,9 @@
-use advent_of_code::{grid, mat_rotate};
+use advent_of_code::{grid_old, mat_rotate};
 
 advent_of_code::solution!(4);
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let mut g = grid(input);
+    let mut g = grid_old(input);
     let mut ans = 0;
     for _ in 0..4 {
         for r in 0..g.len() {
@@ -27,7 +27,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let mut g = grid(input);
+    let mut g = grid_old(input);
     let mut ans = 0;
     for _ in 0..4 {
         for r in 0..g.len() - 2 {

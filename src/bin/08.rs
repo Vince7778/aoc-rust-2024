@@ -1,11 +1,11 @@
 use std::collections::HashSet;
 
-use advent_of_code::{grid, run_move};
+use advent_of_code::{grid_old, run_move};
 
 advent_of_code::solution!(8);
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let g = grid(input);
+    let g = grid_old(input);
     let mut s: HashSet<(usize, usize)> = HashSet::new();
     for r1 in 0..g.len() {
         for c1 in 0..g[0].len() {
@@ -29,7 +29,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let g = grid(input);
+    let g = grid_old(input);
     let mut s: HashSet<(usize, usize)> = HashSet::new();
     for r1 in 0..g.len() {
         for c1 in 0..g[0].len() {

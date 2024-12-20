@@ -1,4 +1,4 @@
-use advent_of_code::{grid, neighbors, repeat_2d};
+use advent_of_code::{grid_old, neighbors, repeat_2d};
 
 advent_of_code::solution!(12);
 
@@ -27,7 +27,7 @@ fn dfs(
 }
 
 pub fn part_one(input: &str) -> Option<usize> {
-    let g = grid(input);
+    let g = grid_old(input);
     let mut ans = 0;
 
     let mut peri = repeat_2d(0_usize, g.len(), g[0].len());
@@ -59,7 +59,7 @@ pub fn part_one(input: &str) -> Option<usize> {
 }
 
 pub fn part_two(input: &str) -> Option<usize> {
-    let g = grid(input);
+    let g = grid_old(input);
 
     let mut peri = repeat_2d(0_usize, g.len(), g[0].len());
     for r in 0..g.len() {

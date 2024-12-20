@@ -42,14 +42,26 @@ pub fn parse_char(c: char) -> isize {
     char::to_digit(c, 10).unwrap() as isize
 }
 
-pub fn grid(input: &str) -> Vec<Vec<char>> {
+pub fn grid_old(input: &str) -> Vec<Vec<char>> {
     input.lines().map(|l| l.chars().collect()).collect()
+}
+pub fn grid(input: &str) -> (Vec<Vec<char>>, usize, usize) {
+    let g: Vec<Vec<char>> = input.lines().map(|l| l.chars().collect()).collect();
+    let r = g.len();
+    let c = g[0].len();
+    (g, r, c)
 }
 pub fn int_grid(input: &str) -> Vec<Vec<isize>> {
     input
         .lines()
         .map(|l| l.split_whitespace().map(|s| s.parse().unwrap()).collect())
         .collect()
+}
+
+pub fn grid_find<T: Eq>(g: &[Vec<T>], v: T) -> Option<(usize, usize)> {
+    g.iter()
+        .enumerate()
+        .find_map(|(i, r)| r.iter().position(|x| *x == v).map(|j| (i, j)))
 }
 
 pub fn repeat_2d<T: Clone>(val: T, r: usize, c: usize) -> Vec<Vec<T>> {
@@ -123,7 +135,7 @@ pub fn neighbors8(cr: isize, cc: isize, r: usize, c: usize) -> Vec<(isize, isize
 
 #[cfg(test)]
 mod tests {
-    use crate::{ints, uints};
+    use crate::{grid_find, ints, uints};
 
     #[test]
     fn test_parse_uints() {
@@ -141,5 +153,16 @@ mod tests {
     fn test_parse_ints_no_negative() {
         let s = "1asdf141 -42 something!?\"4343 -34  04 00 0";
         assert_eq!(ints(s, false), vec![1, 141, 42, 4343, 34, 4, 0, 0]);
+    }
+
+    #[test]
+    fn test_grid_find() {
+        let g = vec![vec![0, 2, 3], vec![4, -1, 7]];
+        for i in 0..g.len() {
+            for j in 0..g[0].len() {
+                assert_eq!(grid_find(&g, g[i][j]), Some((i, j)));
+            }
+        }
+        assert_eq!(grid_find(&g, 1), None)
     }
 }

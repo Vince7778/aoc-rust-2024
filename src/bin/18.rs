@@ -1,7 +1,6 @@
 use itertools::Itertools;
-use std::collections::VecDeque;
 
-use advent_of_code::{neighbors, parse_u, repeat_2d};
+use advent_of_code::{grid_dist, parse_u, repeat_2d};
 
 advent_of_code::solution!(18);
 
@@ -11,22 +10,8 @@ pub fn part_one(input: &str) -> Option<usize> {
         let (c, r) = l.split(',').map(parse_u).collect_tuple().unwrap();
         g[r][c] = true;
     }
-    let mut q = VecDeque::new();
-    let mut vis = repeat_2d(false, g.len(), g[0].len());
-    q.push_back((0, 0, 0));
-    vis[0][0] = true;
-    while let Some((r, c, d)) = q.pop_front() {
-        if r == g.len() - 1 && c == g[0].len() - 1 {
-            return Some(d);
-        }
-        for (nr, nc, _) in neighbors(r, c, g.len(), g[0].len()) {
-            if !vis[nr][nc] && !g[nr][nc] {
-                q.push_back((nr, nc, d + 1));
-                vis[nr][nc] = true;
-            }
-        }
-    }
-    None
+    let dist = grid_dist(&g, (0, 0), true);
+    Some(dist[70][70])
 }
 
 const ROW: usize = 71;

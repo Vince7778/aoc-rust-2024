@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{collections::VecDeque, str::FromStr};
 
 use itertools::repeat_n;
 
@@ -62,6 +62,24 @@ pub fn grid_find<T: Eq>(g: &[Vec<T>], v: T) -> Option<(usize, usize)> {
     g.iter()
         .enumerate()
         .find_map(|(i, r)| r.iter().position(|x| *x == v).map(|j| (i, j)))
+}
+
+pub fn grid_dist<T: Eq>(g: &[Vec<T>], s: (usize, usize), wall: T) -> Vec<Vec<usize>> {
+    let r = g.len();
+    let c = g[0].len();
+    let mut res = repeat_2d(usize::MAX, r, c);
+    res[s.0][s.1] = 0;
+    let mut q: VecDeque<(usize, usize)> = VecDeque::new();
+    q.push_back(s);
+    while let Some(p) = q.pop_front() {
+        for (nr, nc, _) in neighbors(p.0, p.1, r, c) {
+            if g[nr][nc] != wall && res[nr][nc] == usize::MAX {
+                res[nr][nc] = res[p.0][p.1] + 1;
+                q.push_back((nr, nc));
+            }
+        }
+    }
+    res
 }
 
 pub fn repeat_2d<T: Clone>(val: T, r: usize, c: usize) -> Vec<Vec<T>> {
@@ -135,7 +153,7 @@ pub fn neighbors8(cr: isize, cc: isize, r: usize, c: usize) -> Vec<(isize, isize
 
 #[cfg(test)]
 mod tests {
-    use crate::{grid_find, ints, uints};
+    use crate::{grid_dist, grid_find, grid_old, ints, uints};
 
     #[test]
     fn test_parse_uints() {
@@ -164,5 +182,25 @@ mod tests {
             }
         }
         assert_eq!(grid_find(&g, 1), None)
+    }
+
+    #[test]
+    fn test_grid_dist() {
+        /*
+        12345
+        0#4#6
+        #65##
+        876#-
+        */
+        let g = grid_old(".....\n.#.#.\n#..##\n...#.");
+        let gf = grid_dist(&g, (1, 0), '#');
+        let m = usize::MAX;
+        let expected = vec![
+            vec![1, 2, 3, 4, 5],
+            vec![0, m, 4, m, 6],
+            vec![m, 6, 5, m, m],
+            vec![8, 7, 6, m, m],
+        ];
+        assert_eq!(gf, expected);
     }
 }

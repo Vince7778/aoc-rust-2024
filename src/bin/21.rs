@@ -1,11 +1,9 @@
-use std::collections::HashMap;
+use std::{cmp::Ordering, collections::HashMap};
 
 use advent_of_code::{grid_find, grid_old, parse_u};
 use itertools::Itertools;
 
 advent_of_code::solution!(21);
-
-const EMPTY: char = ' ';
 
 trait Pad {
     fn calc_path_cost(&mut self, s: &str) -> usize;
@@ -37,35 +35,36 @@ impl RobotPad {
     }
 
     fn calc_cost(&mut self, a: char, b: char) -> usize {
-        self.get_paths(a, b).into_iter().map(|p| self.linked.calc_path_cost(&p)).min().unwrap()
+        self.get_paths(a, b)
+            .into_iter()
+            .map(|p| self.linked.calc_path_cost(&p))
+            .min()
+            .unwrap()
     }
 
-    fn get_paths_dfs(&self, dr: isize, dc: isize, pos: (usize, usize), s: &mut String, res: &mut Vec<String>) {
-        if self.grid[pos.0][pos.1] == EMPTY {
+    fn get_paths_dfs(
+        &self,
+        dr: isize,
+        dc: isize,
+        goal: (usize, usize),
+        s: String,
+        res: &mut Vec<String>,
+    ) {
+        if self.grid[goal.0.wrapping_add_signed(dr)][goal.1.wrapping_add_signed(dc)] == ' ' {
             return;
         }
         if dr == 0 && dc == 0 {
-            s.push('A');
-            res.push(s.clone());
-            s.pop();
+            res.push(s + "A");
         } else {
-            if dr < 0 {
-                s.push('v');
-                self.get_paths_dfs(dr+1, dc, (pos.0+1, pos.1), s, res);
-                s.pop();
-            } else if dr > 0 {
-                s.push('^');
-                self.get_paths_dfs(dr-1, dc, (pos.0-1, pos.1), s, res);
-                s.pop();
+            match dr.cmp(&0) {
+                Ordering::Less => self.get_paths_dfs(dr + 1, dc, goal, s.clone() + "v", res),
+                Ordering::Greater => self.get_paths_dfs(dr - 1, dc, goal, s.clone() + "^", res),
+                _ => (),
             }
-            if dc < 0 {
-                s.push('>');
-                self.get_paths_dfs(dr, dc+1, (pos.0, pos.1+1), s, res);
-                s.pop();
-            } else if dc > 0 {
-                s.push('<');
-                self.get_paths_dfs(dr, dc-1, (pos.0, pos.1-1), s, res);
-                s.pop();
+            match dc.cmp(&0) {
+                Ordering::Less => self.get_paths_dfs(dr, dc + 1, goal, s.clone() + ">", res),
+                Ordering::Greater => self.get_paths_dfs(dr, dc - 1, goal, s.clone() + "<", res),
+                _ => (),
             }
         }
     }
@@ -76,8 +75,7 @@ impl RobotPad {
         let dr = (ap.0 as isize) - (bp.0 as isize);
         let dc = (ap.1 as isize) - (bp.1 as isize);
         let mut res = Vec::new();
-        let mut s = String::new();
-        self.get_paths_dfs(dr, dc, ap, &mut s, &mut res);
+        self.get_paths_dfs(dr, dc, bp, "".into(), &mut res);
         res
     }
 }
@@ -109,11 +107,14 @@ pub fn part_one(input: &str) -> Option<usize> {
     let r1 = RobotPad::new_dirpad(Box::new(you));
     let r2 = RobotPad::new_dirpad(Box::new(r1));
     let mut rn = RobotPad::new_numpad(Box::new(r2));
-    let res = input.lines().map(|l| {
-        let cost = rn.calc_path_cost(l);
-        let val = parse_u(&l[..3]);
-        val * cost
-    }).sum();
+    let res = input
+        .lines()
+        .map(|l| {
+            let cost = rn.calc_path_cost(l);
+            let val = parse_u(&l[..3]);
+            val * cost
+        })
+        .sum();
     Some(res)
 }
 
@@ -124,11 +125,14 @@ pub fn part_two(input: &str) -> Option<usize> {
         r = Box::new(RobotPad::new_dirpad(r));
     }
     let mut rn = RobotPad::new_numpad(r);
-    let res = input.lines().map(|l| {
-        let cost = rn.calc_path_cost(l);
-        let val = parse_u(&l[..3]);
-        val * cost
-    }).sum();
+    let res = input
+        .lines()
+        .map(|l| {
+            let cost = rn.calc_path_cost(l);
+            let val = parse_u(&l[..3]);
+            val * cost
+        })
+        .sum();
     Some(res)
 }
 

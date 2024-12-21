@@ -12,7 +12,7 @@ trait Pad {
 struct RobotPad {
     grid: Vec<Vec<char>>,
     linked: Box<dyn Pad>,
-    cache: HashMap<String, usize>,
+    cache: HashMap<(char, char), usize>,
 }
 
 impl RobotPad {
@@ -35,11 +35,17 @@ impl RobotPad {
     }
 
     fn calc_cost(&mut self, a: char, b: char) -> usize {
-        self.get_paths(a, b)
+        if let Some(c) = self.cache.get(&(a, b)) {
+            return *c;
+        }
+        let ans = self
+            .get_paths(a, b)
             .into_iter()
             .map(|p| self.linked.calc_path_cost(&p))
             .min()
-            .unwrap()
+            .unwrap();
+        self.cache.insert((a, b), ans);
+        ans
     }
 
     fn get_paths_dfs(
@@ -82,14 +88,10 @@ impl RobotPad {
 
 impl Pad for RobotPad {
     fn calc_path_cost(&mut self, s: &str) -> usize {
-        if let Some(c) = self.cache.get(s) {
-            return *c;
-        }
         let mut ans = self.calc_cost('A', s.chars().next().unwrap());
         for (c1, c2) in s.chars().tuple_windows() {
             ans += self.calc_cost(c1, c2);
         }
-        self.cache.insert(s.to_string(), ans);
         ans
     }
 }

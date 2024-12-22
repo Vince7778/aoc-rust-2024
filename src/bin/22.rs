@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use advent_of_code::{ints, uints};
+use advent_of_code::uints;
 use itertools::Itertools;
 
 advent_of_code::solution!(22);
@@ -31,7 +31,7 @@ pub fn part_two(input: &str) -> Option<usize> {
         let mut vals = Vec::new();
         for _ in 0..2000 {
             let y = calc(x);
-            vals.push(((y%10) - (x%10), y%10));
+            vals.push(((y % 10) - (x % 10), y % 10));
             x = y;
         }
         let mut seen = HashSet::new();
@@ -60,7 +60,9 @@ mod tests {
 
     #[test]
     fn test_part_two() {
-        let result = part_two(&advent_of_code::template::read_file("examples", DAY));
+        let result = part_two(&advent_of_code::template::read_file_part(
+            "examples", DAY, 2,
+        ));
         assert_eq!(result, Some(23));
     }
 }

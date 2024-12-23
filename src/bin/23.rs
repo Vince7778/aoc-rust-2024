@@ -25,10 +25,10 @@ pub fn part_one(input: &str) -> Option<usize> {
                 if x < b {
                     continue;
                 }
-                if adj.get(a).unwrap().contains(x) {
-                    if a.starts_with('t') || b.starts_with('t') || x.starts_with('t') {
-                        ans += 1;
-                    }
+                if adj.get(a).unwrap().contains(x)
+                    && (a.starts_with('t') || b.starts_with('t') || x.starts_with('t'))
+                {
+                    ans += 1;
                 }
             }
         }
@@ -69,7 +69,7 @@ pub fn part_two(input: &str) -> Option<String> {
             }
             inc.insert(cand[rng.gen_range(0..cand.len())].clone());
         }
-        return (inc.len(), inc);
+        (inc.len(), inc)
     };
     let mut max = 0;
     let mut ans = String::new();
